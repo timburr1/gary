@@ -1,0 +1,130 @@
+{
+  "human": {
+    "source": "player_core",
+    "name": "Human",
+    "hp": 8,
+    "size": "Medium",
+    "speed": 25,
+    "ability_boosts": ["free", "free"],
+    "languages": ["Common"],
+    "traits": ["Human", "Humanoid"]
+  },
+  "elf": {
+    "source": "player_core",
+    "name": "Elf",
+    "hp": 6,
+    "size": "Medium",
+    "speed": 30,
+    "ability_boosts": ["dex", "int", "free"],
+    "ability_flaw": "con",
+    "languages": ["Common", "Elven"],
+    "traits": ["Elf", "Humanoid"],
+    "features": ["low_light_vision"]
+  },
+  "dwarf": {
+    "source": "player_core",
+    "name": "Dwarf",
+    "hp": 10,
+    "size": "Medium",
+    "speed": 20,
+    "ability_boosts": ["con", "wis", "free"],
+    "ability_flaw": "cha",
+    "languages": ["Common", "Dwarven"],
+    "traits": ["Dwarf", "Humanoid"],
+    "features": ["darkvision"]
+  },
+  "halfling": {
+    "source": "player_core",
+    "name": "Halfling",
+    "hp": 6,
+    "size": "Small",
+    "speed": 25,
+    "ability_boosts": ["dex", "wis", "free"],
+    "ability_flaw": "str",
+    "languages": ["Common", "Halfling"],
+    "traits": ["Halfling", "Humanoid"],
+    "features": ["keen_eyes"]
+  },
+  "gnome": {
+    "source": "player_core",
+    "name": "Gnome",
+    "hp": 8,
+    "size": "Small",
+    "speed": 25,
+    "ability_boosts": ["con", "cha", "free"],
+    "ability_flaw": "str",
+    "languages": ["Common", "Gnomish", "Fey"],
+    "traits": ["Gnome", "Humanoid"],
+    "features": ["low_light_vision"]
+  },
+  "goblin": {
+    "source": "player_core",
+    "name": "Goblin",
+    "hp": 6,
+    "size": "Small",
+    "speed": 25,
+    "ability_boosts": ["dex", "cha", "free"],
+    "ability_flaw": "wis",
+    "languages": ["Common", "Goblin"],
+    "traits": ["Goblin", "Humanoid"],
+    "features": ["darkvision"]
+  },
+  "orc": {
+    "source": "player_core",
+    "name": "Orc",
+    "hp": 10,
+    "size": "Medium",
+    "speed": 25,
+    "ability_boosts": ["str", "free"],
+    "languages": ["Common", "Orcish"],
+    "traits": ["Orc", "Humanoid"],
+    "features": ["darkvision"]
+  },
+  "leshy": {
+    "source": "player_core",
+    "name": "Leshy",
+    "hp": 8,
+    "size": "Small",
+    "speed": 25,
+    "ability_boosts": ["con", "wis", "free"],
+    "ability_flaw": "int",
+    "languages": ["Common", "Fey"],
+    "traits": ["Leshy", "Plant", "Humanoid"],
+    "features": ["low_light_vision", "plant_nourishment"]
+  },
+  "catfolk": {
+    "source": "player_core_2",
+    "name": "Catfolk",
+    "hp": 8,
+    "size": "Medium",
+    "speed": 25,
+    "ability_boosts": ["dex", "cha", "free"],
+    "ability_flaw": "wis",
+    "languages": ["Common", "Amurrun"],
+    "traits": ["Catfolk", "Humanoid"],
+    "features": ["low_light_vision", "land_on_your_feet"]
+  },
+  "kobold": {
+    "source": "player_core_2",
+    "name": "Kobold",
+    "hp": 6,
+    "size": "Small",
+    "speed": 25,
+    "ability_boosts": ["dex", "cha", "free"],
+    "ability_flaw": "con",
+    "languages": ["Common", "Draconic"],
+    "traits": ["Kobold", "Humanoid"],
+    "features": ["darkvision", "draconic_exemplar"]
+  },
+  "tengu": {
+    "source": "player_core_2",
+    "name": "Tengu",
+    "hp": 6,
+    "size": "Medium",
+    "speed": 25,
+    "ability_boosts": ["dex", "free"],
+    "languages": ["Common", "Tengu"],
+    "traits": ["Tengu", "Humanoid"],
+    "features": ["low_light_vision", "sharp_beak"]
+  }
+}

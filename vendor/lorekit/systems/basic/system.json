@@ -1,0 +1,208 @@
+{
+  "meta": {
+    "name": "Basic d20",
+    "dice": "d20"
+  },
+  "defaults": {
+    "str": 10,
+    "dex": 10,
+    "con": 10,
+    "base_attack": 0,
+    "hit_die_avg": 0,
+    "bonus_melee_attack": 0,
+    "bonus_ranged_attack": 0,
+    "bonus_defense": 0,
+    "item_bonus_ac": 0,
+    "armor_dex_cap": 99,
+    "shield_bonus": 0,
+    "current_hp": 0
+  },
+  "tables": {
+    "base_attack_full": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "base_attack_half": [0, 1, 1, 2, 2, 3, 3, 4, 4, 5],
+    "fortitude_good": [2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
+    "fortitude_poor": [0, 0, 1, 1, 1, 2, 2, 2, 3, 3]
+  },
+  "derived": {
+    "str_mod": "floor((str - 10) / 2)",
+    "dex_mod": "floor((dex - 10) / 2)",
+    "con_mod": "floor((con - 10) / 2)",
+    "melee_attack": "base_attack + str_mod + bonus_melee_attack",
+    "ranged_attack": "base_attack + dex_mod + bonus_ranged_attack",
+    "defense": "10 + dex_mod + bonus_defense",
+    "armor_class": "10 + dex_mod + item_bonus_ac + shield_bonus",
+    "max_hp": "hit_die_avg * level + con_mod * level"
+  },
+  "constraints": {
+    "hp_positive": "max_hp > 0"
+  },
+  "end_turn": {
+    "rounds": {"action": "decrement", "remove_at": 0},
+    "save_ends": {"action": "check", "remove_on": "success"}
+  },
+  "start_turn": {
+    "until_next_turn": {"action": "remove"}
+  },
+  "combat": {
+    "zone_scale": 30,
+    "movement_unit": "ft",
+    "melee_range": 0,
+    "initiative_stat": "melee_attack",
+    "hud": {
+      "vital_stat": {"current": "current_hp", "max": "max_hp", "label": "HP"}
+    },
+    "zone_tags": {
+      "difficult_terrain": {"movement_multiplier": 2},
+      "cover": {"target_stat": "bonus_defense", "value": 2, "modifier_type": "environment"},
+      "elevated": {"target_stat": "bonus_ranged_attack", "value": 1, "modifier_type": "environment"}
+    }
+  },
+  "resolution": {
+    "type": "threshold",
+    "critical": {
+      "natural": 20,
+      "degree_shift": 1
+    },
+    "on_critical": {
+      "damage_multiplier": 2
+    }
+  },
+  "actions": {
+    "melee_attack": {
+      "attack_stat": "melee_attack",
+      "defense_stat": "armor_class",
+      "range": "melee",
+      "on_hit": {
+        "damage_roll": {"dice_attr": "weapon_damage_die", "bonus_stat": "str_mod"},
+        "subtract_from": "current_hp"
+      }
+    },
+    "grapple": {
+      "attack_stat": "melee_attack",
+      "defense_stat": "melee_attack",
+      "contested": true,
+      "range": "melee",
+      "on_hit": {
+        "apply_modifiers": [
+          {"source": "grapple", "target_stat": "bonus_defense", "value": -2, "modifier_type": "condition", "duration_type": "encounter"}
+        ]
+      }
+    },
+    "shove": {
+      "attack_stat": "melee_attack",
+      "defense_stat": "melee_attack",
+      "contested": true,
+      "range": "melee",
+      "on_hit": {
+        "push": 30,
+        "push_direction": "away"
+      }
+    },
+    "fireball": {
+      "attack_stat": "ranged_attack",
+      "defense_stat": "armor_class",
+      "range": "ranged",
+      "on_hit": {
+        "damage_roll": {"dice_attr": "weapon_damage_die", "bonus_stat": "str_mod"},
+        "subtract_from": "current_hp"
+      }
+    },
+    "teleport": {
+      "range": "ranged",
+      "on_use": {
+        "relocate": {"who": "primary", "zone_field": "relocate_zone"}
+      },
+      "intent_fields": {
+        "relocate_zone": {"type": "zone"}
+      }
+    }
+  },
+  "build": {
+    "armor": {
+      "source": "equipment.json",
+      "select": "equipped",
+      "catalog_path": "armor",
+      "writes": {
+        "item_bonus_ac": "ac_bonus",
+        "armor_dex_cap": "dex_cap",
+        "armor_check_penalty": "check_penalty",
+        "armor_speed_penalty": "speed_penalty"
+      }
+    },
+    "shield": {
+      "source": "equipment.json",
+      "select": "equipped",
+      "catalog_path": "shields",
+      "writes": {
+        "shield_bonus": "ac_bonus"
+      }
+    },
+    "weapon": {
+      "source": "equipment.json",
+      "select": "equipped",
+      "catalog_path": "weapons",
+      "writes": {
+        "weapon_damage_die": "damage_die",
+        "weapon_damage_type": "damage_type",
+        "weapon_group": "group",
+        "weapon_traits": "traits"
+      }
+    }
+  },
+
+  "rest": {
+    "short": {
+      "restore": {"current_hp": "floor(max_hp / 2)"},
+      "reset_uses": ["per_encounter"],
+      "clear_duration_types": ["encounter"]
+    },
+    "long": {
+      "restore": {"current_hp": "max_hp"},
+      "reset_uses": ["per_day", "per_encounter"],
+      "clear_duration_types": ["encounter", "rounds", "save_ends"]
+    }
+  },
+
+  "intent": {
+    "steps": {
+      "move": {
+        "field": "move_to",
+        "field_type": "zone",
+        "multi": true,
+        "executor": "movement"
+      },
+      "action": {
+        "executor": "resolve_action",
+        "fields": {
+          "action": { "type": "action_name", "nullable": true },
+          "targets": { "type": "characters", "nullable": true }
+        }
+      }
+    },
+    "default_sequence": ["move", "action"],
+    "sequence_rules": {
+      "max_per_step": { "move": 1, "action": 1 },
+      "max_total": 2
+    },
+    "extra_fields": {
+      "narration": { "type": "text", "nullable": true }
+    },
+    "rules": [
+      "sequence defines execution order — reorder steps as tactics demand",
+      "Most turns use at most one move and one action",
+      "action MUST be one of the available actions — NOT an ability name",
+      "action/targets/move_to can all be null (narrative-only turn)"
+    ]
+  },
+
+  "encounter_templates": {
+    "arena": {
+      "zones": [
+        {"name": "North", "tags": ["cover"]},
+        {"name": "Center", "tags": []},
+        {"name": "South", "tags": []}
+      ],
+      "adjacency": [["North", "Center", 1], ["Center", "South", 1]]
+    }
+  }
+}

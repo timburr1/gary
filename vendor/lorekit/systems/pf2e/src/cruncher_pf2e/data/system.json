@@ -1,0 +1,560 @@
+{
+  "meta": {
+    "name": "Pathfinder 2e (Remaster)",
+    "dice": "d20"
+  },
+
+  "templates": {
+    "source": "spells.json",
+    "ability_category": "spell"
+  },
+
+  "stacking": {
+    "group_by": "bonus_type",
+    "positive": "max",
+    "negative": "sum",
+    "overrides": {
+      "untyped": {"positive": "sum"},
+      "_none": {"positive": "sum"}
+    }
+  },
+
+  "end_turn": {
+    "rounds": {"action": "decrement", "remove_at": 0},
+    "until_escape": {"action": "escape_check", "save_stat": "skill_athletics", "save_dc_stat": "grab_dc"}
+  },
+
+  "combat": {
+    "zone_scale": 30,
+    "movement_unit": "ft",
+    "melee_range": 0,
+    "initiative_stat": "perception",
+    "hud": {
+      "vital_stat": {"current": "current_hp", "max": "max_hp", "label": "HP"}
+    },
+    "zone_tags": {
+      "difficult_terrain": {"movement_multiplier": 2},
+      "cover": {"target_stat": "bonus_ac", "value": 2, "modifier_type": "circumstance"},
+      "greater_cover": {"target_stat": "bonus_ac", "value": 4, "modifier_type": "circumstance"},
+      "elevated": {"target_stat": "bonus_ranged_attack", "value": 1, "modifier_type": "circumstance"}
+    },
+    "condition_rules": {
+      "blinded": {
+        "description": "Cannot see. All terrain is difficult terrain. -4 to Perception. Auto-fail sight-based checks.",
+        "npc_instruction": "You cannot see anything. Move cautiously (all terrain is difficult). Target enemies by sound — expect to miss often. Prioritize recovering from this condition or retreating.",
+        "gm_instruction": "Attacker is off-guard to the blinded creature. Blinded creature treats all creatures as hidden. Flat check DC 11 to target."
+      },
+      "clumsy": {
+        "description": "Penalty to DEX-based checks, AC, and Reflex saves (per rank).",
+        "npc_instruction": "Your agility is impaired. Avoid situations requiring acrobatics or precise movement. Your AC is lower — consider defensive positioning.",
+        "gm_instruction": "Apply -N penalty per rank to all DEX-based checks, AC, and Reflex saves."
+      },
+      "confused": {
+        "description": "Off-guard, can't use reactions, must attack random adjacent target.",
+        "npc_instruction": "You are confused and not in control. Attack a random creature adjacent to you (ally or enemy). You cannot choose your target or use reactions.",
+        "gm_instruction": "The confused character is off-guard and must use their actions to Strike a random adjacent creature. If no adjacent creature, they babble incoherently. Flat check DC 11 at end of turn to recover."
+      },
+      "controlled": {
+        "description": "Another creature determines all your actions.",
+        "npc_instruction": "You have no free will. The controlling creature decides everything you do. Suppress your own goals entirely.",
+        "gm_instruction": "The controller chooses all of the controlled creature's actions. The controlled creature is off-guard."
+      },
+      "dying": {
+        "description": "Unconscious, progressing toward death. Recovery check at start of turn.",
+        "max_total": 0,
+        "npc_instruction": "You are unconscious and dying. You CANNOT act. Your fate depends on allies stabilizing you.",
+        "gm_instruction": "Character is unconscious. At start of each turn, make a flat check (DC 10 + dying value). Success: reduce dying by 1. Failure: increase by 1. Dying 4 = death."
+      },
+      "enfeebled": {
+        "description": "Penalty to STR-based checks and damage (per rank).",
+        "npc_instruction": "Your strength is sapped. Melee attacks and Athletics checks are penalized. Consider ranged options or spellcasting instead.",
+        "gm_instruction": "Apply -N penalty per rank to all STR-based checks, attack rolls using STR, and STR-based damage."
+      },
+      "fascinated": {
+        "description": "Focused on a subject. -2 to Perception and skill checks unrelated to the subject.",
+        "npc_instruction": "You are fixated on the subject of your fascination. You cannot willingly use hostile actions. If threatened or damaged, the fascination breaks.",
+        "gm_instruction": "Character takes -2 to Perception and all skill checks not related to the fascinating subject. Hostile actions break the condition."
+      },
+      "fatigued": {
+        "description": "-1 to AC and saving throws. Cannot explore.",
+        "npc_instruction": "You are exhausted. Your defenses are weakened. If possible, seek rest. Avoid extended combat.",
+        "gm_instruction": "Apply -1 to AC and all saving throws. Recovers after a full night's rest."
+      },
+      "fleeing": {
+        "description": "Must spend all actions trying to escape.",
+        "max_total": 0,
+        "npc_instruction": "You are overcome with the need to flee. Spend ALL your actions moving away from the source of fear. You cannot voluntarily stop fleeing.",
+        "gm_instruction": "Character must use all actions to move away from the source. Cannot use other actions. If cornered, cowers (no actions)."
+      },
+      "frightened": {
+        "description": "Penalty to all checks and DCs (per rank). Reduces by 1 at end of each turn.",
+        "npc_instruction": "You are afraid. Everything you do is penalized. Consider defensive actions or retreating from the source of fear. The fear fades over time.",
+        "gm_instruction": "Apply -N penalty per rank to all checks and DCs. Reduces by 1 automatically at end of the frightened creature's turn."
+      },
+      "grabbed": {
+        "description": "Off-guard and immobilized. Can attempt to Escape.",
+        "max_move": 0,
+        "npc_instruction": "You are held in place and off-guard. You cannot move. Use the Escape action (Athletics or Acrobatics) to break free. This should be your top priority.",
+        "gm_instruction": "Character is off-guard (-2 AC) and immobilized. Can attempt Escape action (Athletics or Acrobatics vs grabber's Athletics DC)."
+      },
+      "immobilized": {
+        "description": "Cannot use actions with the move trait.",
+        "max_move": 0,
+        "npc_instruction": "You cannot move from your current position. Focus on ranged attacks, spells, or actions that don't require movement.",
+        "gm_instruction": "Character cannot Stride, Step, or use any action with the move trait."
+      },
+      "off_guard": {
+        "description": "-2 circumstance penalty to AC.",
+        "npc_instruction": "Your defenses are down — enemies can exploit your vulnerability. Reposition or use defensive actions if possible.",
+        "gm_instruction": "Apply -2 circumstance penalty to AC. Known as flat-footed in legacy rules."
+      },
+      "paralyzed": {
+        "description": "Off-guard, can't act. Flat check DC 11 at end of turn to recover.",
+        "max_total": 0,
+        "npc_instruction": "You are completely paralyzed. You CANNOT act at all. You can only hope to recover at the end of your turn.",
+        "gm_instruction": "Character is off-guard, cannot act. Flat check DC 11 at end of each turn to recover."
+      },
+      "prone": {
+        "description": "-2 to attack rolls. Off-guard. Must Stand (1 action) to get up.",
+        "npc_instruction": "You are on the ground. Your attacks are penalized and you are off-guard. Use the Stand action (1 action) to get up before attacking.",
+        "gm_instruction": "Character takes -2 to melee attack rolls and is off-guard. Standing up costs 1 action."
+      },
+      "quickened": {
+        "description": "Gain 1 extra action per turn (with restrictions).",
+        "npc_instruction": "You have an extra action this turn! Use it wisely — it may be restricted to certain action types (Strike, Stride, or Step).",
+        "gm_instruction": "Character gains 1 additional action. The granting effect usually restricts what the extra action can be used for."
+      },
+      "restrained": {
+        "description": "Off-guard, immobilized, and clumsy 2. Can attempt to Escape.",
+        "max_move": 0,
+        "npc_instruction": "You are heavily restrained — off-guard, immobile, and clumsy. Escaping should be your highest priority. Use Escape action.",
+        "gm_instruction": "Character is off-guard, immobilized, and clumsy 2. Can attempt Escape."
+      },
+      "sickened": {
+        "description": "Penalty to all checks and DCs (per rank). Must save to reduce.",
+        "npc_instruction": "You feel ill. Everything is penalized. You can spend an action to retch (Fortitude save) to try to reduce the sickness.",
+        "gm_instruction": "Apply -N penalty per rank to all checks and DCs. Character can spend an action to attempt a Fortitude save to reduce sickened value by 1."
+      },
+      "slowed": {
+        "description": "Lose actions at start of turn (per rank).",
+        "npc_instruction": "You have fewer actions this turn. Choose carefully — prioritize your most impactful action.",
+        "gm_instruction": "Character loses N actions at the start of their turn. With slowed 1, they have 2 actions instead of 3."
+      },
+      "stunned": {
+        "description": "Lose actions at start of turn. Can't use reactions.",
+        "npc_instruction": "You are stunned and lose actions. You may have very few or no actions this turn. You cannot use reactions.",
+        "gm_instruction": "Character loses N actions at start of turn (stunned value). Cannot use reactions while stunned. Stunned value decreases by actions lost."
+      },
+      "stupefied": {
+        "description": "Penalty to INT/WIS/CHA-based checks and spell DCs (per rank). Flat check to cast spells.",
+        "npc_instruction": "Your mental faculties are impaired. Spellcasting is unreliable — you must make a flat check or the spell fails. Consider non-magical options.",
+        "gm_instruction": "Apply -N penalty per rank to INT/WIS/CHA checks and spell DCs. Casting a spell requires a flat check (DC 5 + stupefied value); failure wastes the spell."
+      },
+      "unconscious": {
+        "description": "Can't act, -4 AC, blinded, off-guard. Drops held items.",
+        "max_total": 0,
+        "npc_instruction": "You are unconscious. You CANNOT act. You are unaware of your surroundings.",
+        "gm_instruction": "Character drops what they're holding, falls prone, -4 AC, off-guard, blinded. Cannot perceive or act."
+      }
+    },
+    "alternate_switching": {
+      "action_cost": "1 action",
+      "max_per_turn": 99
+    },
+    "reactions": {
+      "after_hit": {
+        "reactive_strike": {
+          "description": "Free Strike against attacker (Reactive Strike / Attack of Opportunity)",
+          "scope": "self_targeted"
+        }
+      },
+      "damage_reduction": {
+        "shield_block": {
+          "description": "Reduce damage by shield hardness, shield takes remainder",
+          "scope": "self_targeted"
+        },
+        "retributive_strike": {
+          "description": "Reduce ally damage by 2+level and counter-attack (Champion)",
+          "scope": "ally_targeted",
+          "check": "range"
+        }
+      }
+    }
+  },
+
+  "proficiency_ranks": {
+    "untrained": 0,
+    "trained": 2,
+    "expert": 4,
+    "master": 6,
+    "legendary": 8
+  },
+
+  "defaults": {
+    "str": 10, "dex": 10, "con": 10, "int": 10, "wis": 10, "cha": 10,
+    "ancestry_hp": 0,
+    "hp_per_level": 0,
+    "key_ability_mod": 0,
+    "item_bonus_ac": 0,
+    "armor_dex_cap": 99,
+    "shield_bonus": 0,
+    "speed_base": 25,
+    "prof_perception": 0,
+    "prof_fortitude": 0,
+    "prof_reflex": 0,
+    "prof_will": 0,
+    "prof_class_dc": 0,
+    "prof_simple_weapons": 0,
+    "prof_martial_weapons": 0,
+    "prof_advanced_weapons": 0,
+    "prof_unarmed": 0,
+    "prof_unarmored": 0,
+    "prof_light_armor": 0,
+    "prof_medium_armor": 0,
+    "prof_heavy_armor": 0,
+    "prof_spell_attack": 0,
+    "prof_spell_dc": 0,
+    "prof_acrobatics": 0,
+    "prof_arcana": 0,
+    "prof_athletics": 0,
+    "prof_crafting": 0,
+    "prof_deception": 0,
+    "prof_diplomacy": 0,
+    "prof_intimidation": 0,
+    "prof_medicine": 0,
+    "prof_nature": 0,
+    "prof_occultism": 0,
+    "prof_performance": 0,
+    "prof_religion": 0,
+    "prof_society": 0,
+    "prof_stealth": 0,
+    "prof_survival": 0,
+    "prof_thievery": 0,
+    "bonus_ac": 0,
+    "bonus_hp": 0,
+    "bonus_perception": 0,
+    "bonus_fortitude": 0,
+    "bonus_reflex": 0,
+    "bonus_will": 0,
+    "bonus_speed": 0,
+    "bonus_spell_attack": 0,
+    "bonus_spell_dc": 0,
+    "bonus_acrobatics": 0,
+    "bonus_arcana": 0,
+    "bonus_athletics": 0,
+    "bonus_crafting": 0,
+    "bonus_deception": 0,
+    "bonus_diplomacy": 0,
+    "bonus_intimidation": 0,
+    "bonus_medicine": 0,
+    "bonus_nature": 0,
+    "bonus_occultism": 0,
+    "bonus_performance": 0,
+    "bonus_religion": 0,
+    "bonus_society": 0,
+    "bonus_stealth": 0,
+    "bonus_survival": 0,
+    "bonus_thievery": 0,
+    "bonus_melee_attack": 0,
+    "bonus_ranged_attack": 0,
+    "armor_check_penalty": 0,
+    "armor_speed_penalty": 0,
+    "total_bulk": 0
+  },
+
+  "derived": {
+    "str_mod": "floor((str - 10) / 2)",
+    "dex_mod": "floor((dex - 10) / 2)",
+    "con_mod": "floor((con - 10) / 2)",
+    "int_mod": "floor((int - 10) / 2)",
+    "wis_mod": "floor((wis - 10) / 2)",
+    "cha_mod": "floor((cha - 10) / 2)",
+
+    "armor_class": "10 + min(dex_mod, armor_dex_cap) + if(prof_unarmored > 0, prof_unarmored + level, 0) + item_bonus_ac + shield_bonus + bonus_ac",
+    "max_hp": "ancestry_hp + (hp_per_level + con_mod) * level + bonus_hp",
+    "perception": "wis_mod + if(prof_perception > 0, prof_perception + level, 0) + bonus_perception",
+    "fortitude": "con_mod + if(prof_fortitude > 0, prof_fortitude + level, 0) + bonus_fortitude",
+    "reflex": "dex_mod + if(prof_reflex > 0, prof_reflex + level, 0) + bonus_reflex",
+    "will": "wis_mod + if(prof_will > 0, prof_will + level, 0) + bonus_will",
+    "fortitude_dc": "10 + fortitude",
+    "reflex_dc": "10 + reflex",
+    "will_dc": "10 + will",
+    "perception_dc": "10 + perception",
+    "class_dc": "10 + key_ability_mod + if(prof_class_dc > 0, prof_class_dc + level, 0)",
+    "spell_attack": "key_ability_mod + if(prof_spell_attack > 0, prof_spell_attack + level, 0) + bonus_spell_attack",
+    "spell_dc": "10 + key_ability_mod + if(prof_spell_dc > 0, prof_spell_dc + level, 0) + bonus_spell_dc",
+    "speed": "speed_base + bonus_speed + armor_speed_penalty",
+
+    "skill_acrobatics": "dex_mod + if(prof_acrobatics > 0, prof_acrobatics + level, 0) + bonus_acrobatics + armor_check_penalty",
+    "skill_arcana": "int_mod + if(prof_arcana > 0, prof_arcana + level, 0) + bonus_arcana",
+    "skill_athletics": "str_mod + if(prof_athletics > 0, prof_athletics + level, 0) + bonus_athletics + armor_check_penalty",
+    "skill_crafting": "int_mod + if(prof_crafting > 0, prof_crafting + level, 0) + bonus_crafting",
+    "skill_deception": "cha_mod + if(prof_deception > 0, prof_deception + level, 0) + bonus_deception",
+    "skill_diplomacy": "cha_mod + if(prof_diplomacy > 0, prof_diplomacy + level, 0) + bonus_diplomacy",
+    "skill_intimidation": "cha_mod + if(prof_intimidation > 0, prof_intimidation + level, 0) + bonus_intimidation",
+    "skill_medicine": "wis_mod + if(prof_medicine > 0, prof_medicine + level, 0) + bonus_medicine",
+    "skill_nature": "wis_mod + if(prof_nature > 0, prof_nature + level, 0) + bonus_nature",
+    "skill_occultism": "int_mod + if(prof_occultism > 0, prof_occultism + level, 0) + bonus_occultism",
+    "skill_performance": "cha_mod + if(prof_performance > 0, prof_performance + level, 0) + bonus_performance",
+    "skill_religion": "wis_mod + if(prof_religion > 0, prof_religion + level, 0) + bonus_religion",
+    "skill_society": "int_mod + if(prof_society > 0, prof_society + level, 0) + bonus_society",
+    "skill_stealth": "dex_mod + if(prof_stealth > 0, prof_stealth + level, 0) + bonus_stealth + armor_check_penalty",
+    "skill_survival": "wis_mod + if(prof_survival > 0, prof_survival + level, 0) + bonus_survival",
+    "skill_thievery": "dex_mod + if(prof_thievery > 0, prof_thievery + level, 0) + bonus_thievery + armor_check_penalty",
+
+    "melee_attack": "str_mod + if(prof_simple_weapons > 0, prof_simple_weapons + level, 0) + bonus_melee_attack",
+    "ranged_attack": "dex_mod + if(prof_simple_weapons > 0, prof_simple_weapons + level, 0) + bonus_ranged_attack",
+
+    "grab_dc": "class_dc",
+
+    "bulk_limit": "5 + str_mod",
+    "bulk_over": "max(0, total_bulk - bulk_limit)",
+
+    "power_attack_extra": "if(level >= 18, 3, if(level >= 10, 2, 1))"
+  },
+
+  "resolution": {
+    "type": "threshold",
+    "critical": {
+      "natural": 20,
+      "degree_shift": 1
+    },
+    "on_critical": {
+      "damage_multiplier": 2
+    }
+  },
+  "actions": {
+    "melee_attack": {
+      "attack_stat": "melee_attack",
+      "defense_stat": "armor_class",
+      "range": "melee",
+      "on_hit": {
+        "damage_roll": {"dice_attr": "weapon_damage_die", "bonus_stat": "str_mod"},
+        "subtract_from": "current_hp"
+      }
+    },
+    "ranged_attack": {
+      "attack_stat": "ranged_attack",
+      "defense_stat": "armor_class",
+      "range": "ranged",
+      "range_stat": "weapon_range",
+      "on_hit": {
+        "damage_roll": {"dice_attr": "weapon_damage_die", "bonus_stat": "dex_mod"},
+        "subtract_from": "current_hp"
+      }
+    },
+    "grapple": {
+      "attack_stat": "skill_athletics",
+      "defense_stat": "fortitude_dc",
+      "range": "melee",
+      "on_hit": {
+        "apply_modifiers": [
+          {"source": "grapple", "target_stat": "bonus_ac", "value": -2, "modifier_type": "circumstance", "duration_type": "until_escape"},
+          {"source": "grapple", "target_stat": "bonus_speed", "value": -999, "modifier_type": "condition", "duration_type": "until_escape"}
+        ]
+      }
+    },
+    "shove": {
+      "attack_stat": "skill_athletics",
+      "defense_stat": "fortitude_dc",
+      "range": "melee",
+      "on_hit": {
+        "push": 5,
+        "push_direction": "away"
+      }
+    },
+    "disarm": {
+      "attack_stat": "skill_athletics",
+      "defense_stat": "reflex_dc",
+      "range": "melee",
+      "on_hit": {
+        "apply_modifiers": [
+          {"source": "disarm", "target_stat": "bonus_melee_attack", "value": -2, "modifier_type": "circumstance", "duration_type": "until_escape"}
+        ]
+      }
+    },
+    "trip": {
+      "attack_stat": "skill_athletics",
+      "defense_stat": "reflex_dc",
+      "range": "melee",
+      "on_hit": {
+        "apply_modifiers": [
+          {"source": "trip", "target_stat": "bonus_ac", "value": -2, "modifier_type": "circumstance", "duration_type": "until_escape"}
+        ]
+      }
+    },
+    "power_attack": {
+      "attack_stat": "melee_attack",
+      "defense_stat": "armor_class",
+      "range": "melee",
+      "on_hit": {
+        "damage_roll": [
+          {"dice_attr": "weapon_damage_die", "bonus_stat": "str_mod"},
+          {"dice_attr": "weapon_damage_die", "count_stat": "power_attack_extra"}
+        ],
+        "subtract_from": "current_hp"
+      }
+    }
+  },
+
+  "constraints": {
+    "hp_positive": "max_hp > 0"
+  },
+
+  "build": {
+    "ancestry": {
+      "source": "ancestries.json",
+      "select": "single",
+      "writes": {"ancestry_hp": "hp", "speed_base": "speed"}
+    },
+    "heritage": {
+      "source": "heritages.json",
+      "select": "single",
+      "effects": true
+    },
+    "class": {
+      "source": "classes/{class}.json",
+      "select": "single",
+      "writes": {"hp_per_level": "meta.hp_per_level"},
+      "progressions": "meta.progressions"
+    },
+    "feat": {
+      "source": "feats.json",
+      "select": "multiple",
+      "effects": true
+    },
+    "armor": {
+      "source": "equipment.json",
+      "select": "equipped",
+      "catalog_path": "armor",
+      "writes": {
+        "item_bonus_ac": "ac_bonus",
+        "armor_dex_cap": "dex_cap",
+        "armor_check_penalty": "check_penalty",
+        "armor_speed_penalty": "speed_penalty"
+      }
+    },
+    "shield": {
+      "source": "equipment.json",
+      "select": "equipped",
+      "catalog_path": "shields",
+      "writes": {
+        "shield_bonus": "ac_bonus"
+      }
+    },
+    "weapon": {
+      "source": "equipment.json",
+      "select": "equipped",
+      "catalog_path": "weapons",
+      "writes": {
+        "weapon_damage_die": "damage_die",
+        "weapon_damage_type": "damage_type",
+        "weapon_group": "group",
+        "weapon_traits": "traits"
+      }
+    },
+    "background": {
+      "source": "backgrounds.json",
+      "select": "single",
+      "effects": true
+    }
+  },
+
+  "encounter_end": {
+    "clear_duration_types": [
+      "encounter", "rounds", "concentration",
+      "until_next_turn", "reaction"
+    ]
+  },
+
+  "rest": {
+    "short": {
+      "restore": {"current_hp": "current_hp"},
+      "reset_uses": ["per_encounter"],
+      "clear_duration_types": ["encounter"]
+    },
+    "long": {
+      "restore": {"current_hp": "max_hp"},
+      "reset_uses": ["per_day", "per_encounter"],
+      "clear_duration_types": ["encounter", "rounds", "save_ends"],
+      "time_advance": {"amount": 8, "unit": "hours"}
+    }
+  },
+
+  "derived_patterns": {
+    "lore": {
+      "formula": "int_mod + if(prof_{slug} > 0, prof_{slug} + level, 0) + bonus_{slug}",
+      "default_prof": 0,
+      "default_bonus": 0
+    }
+  },
+
+  "intent": {
+    "steps": {
+      "move": {
+        "field": "move_to",
+        "field_type": "zone",
+        "multi": true,
+        "executor": "movement"
+      },
+      "action": {
+        "executor": "resolve_action",
+        "fields": {
+          "action": { "type": "action_name", "nullable": true },
+          "targets": { "type": "characters", "nullable": true }
+        }
+      }
+    },
+    "default_sequence": ["move", "action"],
+    "sequence_rules": {
+      "max_per_step": { "move": 1, "action": 1 },
+      "max_total": 2
+    },
+    "extra_fields": {
+      "narration": { "type": "text", "nullable": true }
+    },
+    "rules": [
+      "sequence defines execution order — reorder steps as tactics demand",
+      "Most turns use at most one move and one action",
+      "action MUST be one of the available actions — NOT an ability name",
+      "action/targets/move_to can all be null (narrative-only turn)"
+    ]
+  },
+
+  "encounter_templates": {
+    "tavern_brawl": {
+      "zones": [
+        {"name": "Bar", "tags": ["cover"]},
+        {"name": "Common Room", "tags": []},
+        {"name": "Kitchen", "tags": ["difficult_terrain"]},
+        {"name": "Street", "tags": []}
+      ],
+      "adjacency": [["Bar", "Common Room", 1], ["Common Room", "Kitchen", 1], ["Common Room", "Street", 1]]
+    },
+    "dungeon_corridor": {
+      "zones": [
+        {"name": "Entrance", "tags": []},
+        {"name": "Hallway", "tags": []},
+        {"name": "Chamber", "tags": []}
+      ],
+      "adjacency": [["Entrance", "Hallway", 1], ["Hallway", "Chamber", 1]]
+    },
+    "open_field": {
+      "zones": [
+        {"name": "North", "tags": []},
+        {"name": "Center", "tags": []},
+        {"name": "South", "tags": []}
+      ],
+      "adjacency": [["North", "Center", 1], ["Center", "South", 1]]
+    },
+    "forest_ambush": {
+      "zones": [
+        {"name": "Trail", "tags": []},
+        {"name": "Dense Trees", "tags": ["cover", "difficult_terrain"]},
+        {"name": "Clearing", "tags": []},
+        {"name": "Ridge", "tags": ["elevated"]}
+      ],
+      "adjacency": [["Trail", "Dense Trees", 1], ["Dense Trees", "Clearing", 1], ["Clearing", "Ridge", 1], ["Trail", "Clearing", 2]]
+    }
+  }
+}

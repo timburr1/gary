@@ -1,0 +1,16 @@
+{
+  "power_attack": {
+    "name": "Power Attack",
+    "category": "combat",
+    "prereqs": {"base_attack": 1},
+    "combat_option": true,
+    "effects": {"bonus_melee_attack": -2, "bonus_melee_damage": 4}
+  },
+  "weapon_focus": {
+    "name": "Weapon Focus",
+    "category": "combat",
+    "prereqs": {"base_attack": 1},
+    "param": "weapon_type",
+    "effects": {"bonus_melee_attack": 1}
+  }
+}

@@ -1,4 +1,7 @@
 # Gary
+![](https://img.shields.io/github/repo-size/timburr1/gary)
+![](https://img.shields.io/github/contributors/timburr1/gary)
+![](https://img.shields.io/github/last-commit/timburr1/gary)
 
 A Discord bot that runs a Pathfinder 2e campaign. The game master is a
 [LoreKit](https://github.com/matluz1/lorekit) session: LoreKit runs a Claude
@@ -36,8 +39,9 @@ display name, so the GM can already tell people apart.
 
 ## Vendored LoreKit
 
-`vendor/lorekit` is LoreKit at commit `db83614`, with these local patches
-(`git -C vendor/lorekit diff` shows them):
+`vendor/lorekit` is a copy of LoreKit at upstream commit `db83614`, committed
+directly into this repo. The local patches are all in
+`src/lorekit/orchestrator.py` and `src/lorekit/providers/claude/provider.py`:
 
 - The Claude system prompt goes in a file (`--system-prompt-file`), because
   the GM guidelines are longer than Windows' 32K command-line limit.
