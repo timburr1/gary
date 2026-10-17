@@ -1,0 +1,7 @@
+discord.py>=2.4
+python-dotenv>=1.0
+# LoreKit doesn't pin mcp, and mcp 2.x removed the FastMCP API it uses.
+# 1.26.0 is the version in LoreKit's uv.lock.
+mcp[cli]==1.26.0
+-e ./vendor/lorekit/cruncher
+-e ./vendor/lorekit
